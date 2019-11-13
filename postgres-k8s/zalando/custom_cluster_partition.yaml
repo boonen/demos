@@ -1,0 +1,36 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: gm-cluster-partition
+  namespace: zalando
+spec:
+  teamId: "GM"
+  volume:
+    size: 2Gi
+  numberOfInstances: 2
+  users:
+    # database owner
+    orggeodbadmin:
+      - superuser
+      - createdb
+
+    # roles for applications
+    orggeodb: []
+    innovatie: []
+
+  #databases: name->owner
+  databases:
+    orggeodb: orggeodbadmin
+    innovatie: orggeodbadmin
+  enableShmVolume: true
+  postgresql:
+    version: "11"
+    parameters:
+      shared_buffers: "64MB"
+      max_connections: "10"
+      log_statement: "all"
+  patroni:
+    initdb:
+      encoding: "UTF8"
+      locale: "en_US.UTF-8"
+      data-checksums: "true"

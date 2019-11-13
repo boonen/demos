@@ -1,0 +1,36 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: geodanmaps-orggeodb-cluster
+  labels:
+    organisationCode: GEOD4222TEST
+    environment: dev
+    service: orggeodb
+spec:
+  teamId: "GeodanMaps"
+  volume:
+    size: 1Gi
+  numberOfInstances: 2
+  users:
+    postgresql:  # database owner
+    - superuser
+    - createdb
+    orggeodbadmin:
+    - createdb
+    orggeodb: []
+  databases:
+    orggeodb: orggeodbadmin
+  postgresql:
+    version: "11"
+    parameters:
+      shared_buffers: "32MB"
+      max_connections: "75"
+      log_statement: "all"
+  resources:
+    requests:
+      memory: 100Mi
+      cpu: 100m
+    limits:
+      memory: 300Mi
+      cpu: 500m
+
