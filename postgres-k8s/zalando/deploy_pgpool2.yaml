@@ -27,19 +27,29 @@ spec:
     spec:
       containers:
         - name: geodanmaps-orggeodb-cluster-pgpool2
-          image: bitnami/pgpool:latest
+          image: bitnami/pgpool:4-centos-7
           ports:
             - containerPort: 5432
           env:
-            - name: "PGPOOL_USERNAME"
+            - name: "PGPOOL_ADMIN_USERNAME"
               valueFrom:
                 secretKeyRef:
                   name: orggeodbadmin.geodanmaps-orggeodb-cluster.credentials
                   key: username
-            - name: "PGPOOL_PASSWORD"
+            - name: "PGPOOL_ADMIN_PASSWORD"
               valueFrom:
                 secretKeyRef:
                   name: orggeodbadmin.geodanmaps-orggeodb-cluster.credentials
+                  key: password             
+            - name: "PGPOOL_POSTGRES_USERNAME"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres.geodanmaps-orggeodb-cluster.credentials
+                  key: username
+            - name: "PGPOOL_POSTGRES_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres.geodanmaps-orggeodb-cluster.credentials
                   key: password
             - name: "PGPOOL_SR_CHECK_USER"
               valueFrom:

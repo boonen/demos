@@ -31,10 +31,11 @@ downloaded.
 
 After installation run the follow commands (starting Minikube takes at least 3-5 minutes):
 
-    minikube start
+    minikube start --kubernetes-version v1.15.3
     minikube dashboard
 
-The dashboard opens on a random port and opens a page/tab in your default browser.
+The dashboard opens on a random port and opens a page/tab in your default browser. Since Zalando's operator does not yet
+work well with K8s 1.16.x and above, we choose an older version.
 
 ### Executing command with Kubectl
 
@@ -107,7 +108,7 @@ make connecting with PostgreSQL easier:
     export PGUSER=orggeodbadmin
     export PGHOST=localhost
     export PGPORT=5433
-    export PGPASSWORD=$(kubectl get secret orgeodbadmin.geodanmaps-orggeodb-cluster.credentials -o 'jsonpath={.data.password}' | base64 -d)
+    export PGPASSWORD=$(kubectl get secret orggeodbadmin.geodanmaps-orggeodb-cluster.credentials -o 'jsonpath={.data.password}' | base64 -d)
     
 You can now connect to the database from your local machine using a simple `psql` command:
 
@@ -160,6 +161,15 @@ Adding or removing Postgres nodes is very simple: update the *manifest* file and
 Let's say we want to migrate from 9.6 to 10. There's no clear documentation on how to update a running Postgres cluster on
 Kubernetes. The Patroni repository has an issue with a [short explanantion](https://github.com/zalando/patroni/issues/424), 
 but the targeted setup does not include the postres-operator. However, this would be a good starting point for tests.
+
+### Deleting the cluster
+
+If you want to start a new test, you can always delete the Minikube cluster and start from scratch. This will however take 5-10
+minutes. You can also remove the database cluster that is being managed by the PostgreSQL Operator. Then you can change the
+settings for a new cluster and spin off a new cluster. Deleting a cluster is done using (the cluster name is defined
+in the YAML file with the *Deployment* descriptor:
+
+    kubectl -n zalando delete postgresl geodanmaps-orggeodb-cluster.yaml
 
 ## Crunchy Data stack
 
